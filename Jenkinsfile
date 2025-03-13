@@ -1,37 +1,19 @@
 pipeline {
     agent any
-    environment {
-        IMAGE_NAME = "java-api-rest"
-    }
-    
     stages {
-        stage('Clonar repositorio') {
+        stage('Build') {
             steps {
-                git url: 'https://github.com/Angycht/java-api-rest.git', branch: 'main'
+                sh 'npm install'
             }
         }
-        
-        stage('Compilar proyecto') {
+        stage('Test') {
             steps {
-                sh 'mvn clean package'
+                sh './script/test'
             }
         }
-        
-        stage('Construir imagen Docker') {
+        stage('Deploy') {
             steps {
-                script {
-                    docker.build("${IMAGE_NAME}:${BUILD_NUMBER}")
-                }
-            }
-        }
-        
-        stage('Publicar imagen') {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-creds') {
-                        docker.image("${IMAGE_NAME}:${BUILD_NUMBER}").push()
-                    }
-                }
+                sh './script/deploy'
             }
         }
     }
