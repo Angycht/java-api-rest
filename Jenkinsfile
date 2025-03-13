@@ -1,19 +1,35 @@
 pipeline {
     agent any
+
     stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/Angycht/java-api-rest.git', branch: 'main'
+            }
+        }
+
         stage('Build') {
             steps {
-                sh 'npm install'
+                sh 'mvn clean package'
             }
         }
+
         stage('Test') {
             steps {
-                sh './script/test'
+                sh 'mvn test'
             }
         }
-        stage('Deploy') {
+
+
+        stage('Docker Build') {
             steps {
-                sh './script/deploy'
+                sh 'docker build -t java-api-rest .'
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                sh 'docker push java-api-rest'
             }
         }
     }
