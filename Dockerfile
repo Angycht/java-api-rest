@@ -1,3 +1,3 @@
 FROM openjdk:11
-COPY api.jar /api.jar
+COPY target/api.jar /api.jar
 CMD ["java", "-jar", "/api.jar"]
